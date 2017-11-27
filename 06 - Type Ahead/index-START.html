@@ -15,8 +15,81 @@
     </ul>
   </form>
 <script>
-const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+  const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
 
+  // create an empty array to fill in the data we're fetching
+  const cities = [];
+
+  // fetch() itself will return what is called a promise
+  // the way that we can work with a promise is by calling .then() against the promise
+  // .then() is going to return just like a blob of data
+  fetch(endpoint)
+          // the data that comes back from our fetch() doesn't know what kind of data it is (img, html, music...)
+          // we explicitly know that it is json
+          // the blob has to be converted from the raw data into json
+          .then(blob => blob.json())
+
+          // blob.json() is going to return another promise which we're going to call .then() on
+          // that is going to give you the raw data
+          // now we want to get this data into the empty cities array
+          // so we push the items into cities
+          // but this returns a nested array
+          // the way that we can change this array into individual arguments is to spread into it
+          // so we spread into this push method
+          // and that will give us the proper array of cities
+          .then(data => cities.push(...data));
+
+  function findMatches(wordToMatch, cities) {
+    // place is one item (object) of the cities array
+    return cities.filter(place => {
+      // here we need to figure out if the city or state matches what was searched
+
+      // gi = global insensitive > it's going to match lowercase as well as uppercase regardless of what you're searching
+      const regex = new RegExp(wordToMatch, 'gi');
+      return place.city.match(regex) || place.state.match(regex);
+    });
+  }
+
+  // function from stackOverflow to display numbers with nice commas
+  function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+
+  function displayMatches() {
+    // we use ours findMatches() function inside here
+    const matchArray = findMatches(this.value, cities);
+
+    // from each place return our list item
+    const html = matchArray.map(place => {
+      // find whatever it matched in the regex and replace it with the <span class="hl">
+      const regex = new RegExp(this.value, 'gi');
+
+      const cityName = place.city.replace(regex, `<span class="hl">${this.value}</span>`);
+      const stateName = place.state.replace(regex, `<span class="hl">${this.value}</span>`);
+
+      return `
+        <li>
+          <span class="name">${cityName}, ${stateName}</span>
+          <span class="population">${numberWithCommas(place.population)}</span>
+        </li>
+      `
+    }).join('');  // this map is going to return an array, but we want a string, so we can call .join() on the end which will turn it into a string
+
+    // once we've mapped over this array, we can call the following:
+    suggestions.innerHTML = html;
+  }
+
+  // select the search input
+  const searchInput = document.querySelector('.search');
+  // select the suggestion list
+  const suggestions = document.querySelector('.suggestions');
+
+  // listen for 'change' and 'keyup' event on the search input
+  // (because 'change' only fires when you go off that input)
+  searchInput.addEventListener('change', displayMatches);
+  searchInput.addEventListener('keyup', displayMatches);
+  
 </script>
-  </body>
+
+</body>
 </html>
