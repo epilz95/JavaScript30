@@ -7,6 +7,24 @@
 </head>
 <body>
 <script>
+  const pressed = [];
+  // what we are looking for to be typed in
+  const secretCode = 'wesbos';
+
+  window.addEventListener('keyup', (e) => {
+    console.log(e.key);
+    // pushes the items into the pressed array
+    pressed.push(e.key);
+    // starts from the end (to prevent the array from getting infinitely big)
+    pressed.splice(-secretCode.length -1, pressed.length - secretCode.length);
+    
+    // join the array items into a string
+    // check if it includes the secretCode
+    if (pressed.join('').includes(secretCode)) {
+      console.log('DING DING');
+      cornify_add();
+    }
+  });
 </script>
 </body>
 </html>
