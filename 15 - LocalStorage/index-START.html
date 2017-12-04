@@ -28,7 +28,75 @@
 <script>
   const addItems = document.querySelector('.add-items');
   const itemsList = document.querySelector('.plates');
-  const items = [];
+  // items is either an object of the string value in the localStorage or an empty array
+  const items = JSON.parse(localStorage.getItem('items')) || [];
+
+  function addItem(e) {
+    // stop the page from reloading
+    // because by default a form is going to send the data and refresh the page
+    e.preventDefault();
+
+    // select the input's value
+    // 'this' is going to be the actual form
+    const text = (this.querySelector('[name="item"]')).value;
+
+    const item = {
+      text: text,   // you can use "text" instead of "text: text"
+      done: false
+    };
+
+    // take the item and put it into the items array
+    items.push(item);
+
+    // every time we add an item, we're calling the populateList function
+    populateList(items, itemsList);
+
+    // setItem() is a method on the localStorage
+    // the localStorage only takes string values, so we need to stringify our items object
+    localStorage.setItem('items', JSON.stringify(items));
+
+    // reset the form
+    this.reset();
+  }
+
+  // plates = items
+  // platesList = itemsList
+  function populateList(plates = [], platesList) {
+    platesList.innerHTML = plates.map((plate, i) => {
+      return `
+        <li>
+          <input type="checkbox" data-index=${i} id="item${i}" ${plate.done ? 'checked' : ''}>
+          <label for="item${i}">${plate.text}</label>
+        </li>
+      `;
+    }).join('');  // map is going to return an array and innerHTML requires a string, so we need to join it
+  }
+
+  function toggleDone(e) {
+    // check if it's the actual thing that we want
+    if (!e.target.matches('input')) return; // skip this unless it's an input
+    
+    const element = e.target;
+    const index = element.dataset.index;
+    
+    // change the property: if this is true, flip it to the opposite
+    items[index].done = !items[index].done;
+
+    // store the property in localStorage
+    localStorage.setItem('items', JSON.stringify(items));
+    
+    // visually update what's on our page
+    populateList(items, itemsList);
+  }
+
+  // submit covers clicking the button, hitting enter, anything external...
+  addItems.addEventListener('submit', addItem);
+
+  // event delegation: listen for a click on an element that may not exist on pageLoad
+  itemsList.addEventListener('click', toggleDone);
+
+  // on pageLoad before anything happens, 'items' is going to be populated as empty array OR object from the localStorage (so the items typed in before are not going to reset on refreshing the page)
+  populateList(items, itemsList);
 
 </script>
 
