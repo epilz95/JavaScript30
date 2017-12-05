@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mouse Shadow</title>
+</head>
+<body>
+
+  <div class="hero">
+    <h1 contenteditable>🔥WOAH!</h1>
+  </div>
+
+  <style>
+  html {
+    color:black;
+    font-family: sans-serif;
+  }
+
+  body {
+    margin: 0;
+  }
+
+  .hero {
+    min-height: 100vh;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    color:black;
+  }
+
+  h1 {
+    text-shadow: 10px 10px 0 rgba(0,0,0,1);
+    font-size: 100px;
+  }
+  </style>
+
+<script>
+
+const hero = document.querySelector('.hero');   // grab the hero
+const text = hero.querySelector('h1')   // text inside the hero
+
+// how many pixels at its most should the text-shadow be streched
+const walk = 100;   // 100px
+
+function shadow(e) {
+    // get the width and the height of the thing that we have hovered over (hero)
+    const { offsetWidth: width, offsetHeight: height } = hero;
+
+    // figure out where the person's cursor was
+    let { offsetX: x, offsetY: y } = e;     // same as using e.offsetX
+
+    // even though we added the eventListener on the hero
+    // if there are children of the actual element, it's going to give us the x and the y of the child element we've hovered over
+    // so we need some normalization
+    if (this !== e.target) {
+        // this = the thing that you've listened on
+        // e.target = the thing that it actually triggered on
+
+        // if someone hovers over the h1
+        // add the x and y values to whatever it is from the left / whatever it is from the top
+        x = x + e.target.offsetLeft;
+        y = y + e.target.offsetTop;
+    }
+
+    // walk = 100, we wanna go from -50 to 50 instead of 0 to 100
+    // Math.round to get values without comma
+    const xWalk = Math.round((x / width * walk) - (walk / 2));
+    const yWalk = Math.round((y / height * walk) - (walk / 2));
+
+    text.style.textShadow = `
+        ${xWalk}px ${yWalk}px 0 rgba(255,255,0,0.5),
+        ${xWalk * -1}px ${yWalk}px 0 rgba(255,0,255,0.5),
+        ${yWalk}px ${xWalk * -1}px 0 rgba(0,255,0,0.5),
+        ${yWalk * -1}px ${xWalk}px 0 rgba(0,225,255,0.5)
+    `;
+}
+
+hero.addEventListener('mousemove', shadow);
+
+</script>
+</body>
+</html>
