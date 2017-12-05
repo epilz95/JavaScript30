@@ -182,6 +182,33 @@
     </li>
   </ul>
 <script>
+
+// timeNodes is initially a NodeList, so we need to convert it into an array
+const timeNodes = Array.from(document.querySelectorAll('[data-time]'));
+
+// map: make it from an array of list items into an array of strings
+const seconds = timeNodes
+  .map(node => node.dataset.time)
+  .map(timeCode => {
+    // split the dataset content at ':' and turn it from a string into a number
+    const [mins, secs] = timeCode.split(':').map(parseFloat);
+    // give us the total amount of seconds for each video
+    return (mins * 60) + secs;
+  })
+  // add up all the times into the total seconds amount
+  .reduce((total, vidSeconds) => total + vidSeconds);
+
+let secondsLeft = seconds;
+
+// Math.floor rundet ab
+const hours = Math.floor(secondsLeft / 3600);
+secondsLeft = secondsLeft % 3600;
+
+const mins = Math.floor(secondsLeft / 60);
+secondsLeft = secondsLeft % 60;
+
+console.log(hours, mins, secondsLeft);
+
 </script>
 </body>
 </html>
