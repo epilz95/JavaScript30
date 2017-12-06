@@ -20,7 +20,9 @@
   recognition.interimResults = true;  // if you set it to false, you would need to stop speaking before you can see anything on the screen
 
   let p = document.createElement('p');
+  // select the '.words' div to put the paragraphs in
   const words = document.querySelector('.words');
+  // put the paragraphs into the words div
   words.appendChild(p);
 
   recognition.addEventListener('result', e => {
@@ -29,6 +31,7 @@
       .map(result => result.transcript)
       .join('')
 
+    // set the paragraph's content equal to the transcript content
     p.textContent = transcript;
 
     // check if the result is final
