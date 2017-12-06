@@ -27,6 +27,34 @@
 
   <script>
     // 👀👀👀👀👀👀👀👀👀👀👀👀👀👀👀
+
+    const triggers = document.querySelectorAll('a');
+    // create a new highlight element and append it to the body
+    const highlight = document.createElement('span');
+    highlight.classList.add('highlight');
+    document.body.append(highlight);
+
+    function highlightLink() {
+      // returns the size of an element and its position
+      const linkCoords = this.getBoundingClientRect();
+      // console.log(linkCoords);
+
+      // create our own coords, because the effect isn't properly working when we scroll
+      const coords = {
+        width: linkCoords.width,
+        height: linkCoords.height,
+        top: linkCoords.top + window.scrollY,
+        left: linkCoords.left + window.scrollX
+      }
+
+      // move our highlight element according to the mouseentered link
+      highlight.style.width = `${coords.width}px`;
+      highlight.style.height = `${coords.height}px`;
+      highlight.style.transform = `translate(${coords.left}px, ${coords.top}px)`
+    }
+
+    triggers.forEach(link => link.addEventListener('mouseenter', highlightLink));
+
   </script>
 </body>
 </html>
