@@ -40,6 +40,33 @@
 <button></button>
 <script>
 
+const divs = document.querySelectorAll('div');
+const button = document.querySelector('button');
+
+function logText(e) {
+  console.log(this.classList.value);
+  // e.stopPropagation();  // stop bubbling this event up and fire only on the one that was actually clicked (it will no longer trigger events on the parents)
+}
+
+divs.forEach(div => div.addEventListener('click', logText, {
+  capture: false,
+  once: true
+}));
+
+// Bubbling: if you click on the inner-most div, it also triggers on the alements all the way up
+
+// if you pass a third argument which is an options object
+    // - (capture: true): the function is not going to run on the bubble up (three, two, one), it's going to run on the capture down (one, two, three)
+    // - (once: true): it listens for a click and then unbinds itself (same as .removeEventListener('click', logText)), it will only run once and never again
+
+button.addEventListener('click', () => {
+  console.log('Click!!!');
+}, {
+  once: true
+})
+
+// use the example above if you want a user to click a button only once (e.g. store checkout)
+
 </script>
 </body>
 </html>
